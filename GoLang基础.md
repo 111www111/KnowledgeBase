@@ -58,7 +58,9 @@ go version go1.16.6 windows/amd64
 ### 配置go环境
 
 ```
-go env -w GO111MODULE=on 
+// 开启模块支持，无论什么情况，go命令都会使用module
+go env -w GO111MODULE=on
+// 配置国内源
 go env -w GOPROXY=https://goproxy.cn,https://goproxy.io,direct
 
 ```
