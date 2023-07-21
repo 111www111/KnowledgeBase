@@ -89,7 +89,7 @@ DELETE请求 :http:{ip}/9200/{索引名称}
 
 ### 1.1创建文档
 
-POST请求 ：http://121.4.23.51:9200/{文档名}/_doc
+POST请求 ：http://{ip}:9200/{文档名}/_doc
 
 ```
 #入参
@@ -118,13 +118,13 @@ POST请求 ：http://121.4.23.51:9200/{文档名}/_doc
 
 ### 1.2自定义ID
 
-POST请求 ： http://121.4.23.51:9200/{文档名字}/_doc/{id}
+POST请求 ： http://{ip}:9200/{文档名字}/_doc/{id}
 
 ## 1.3简单查询
 
 ### 1.1根据主键id查询
 
-GET请求 ： http://121.4.23.51:9200/{文档名字}/_doc/{id}
+GET请求 ： http://{ip}:9200/{文档名字}/_doc/{id}
 
 ```
 找到是这样的
@@ -154,7 +154,7 @@ GET请求 ： http://121.4.23.51:9200/{文档名字}/_doc/{id}
 
 ### 1.2查询索引下所有数据
 
-GET请求：http://121.4.23.51:9200/{文档名字}/_search
+GET请求：http://{ip}:9200/{文档名字}/_search
 
 ```
 {
@@ -231,7 +231,7 @@ GET请求：http://121.4.23.51:9200/{文档名字}/_search
 
 ### 1.1完全覆盖修改 根据id
 
-PUT	请求 ： http://121.4.23.51:9200/{索引}/_doc/{id}
+PUT	请求 ： http://{ip}:9200/{索引}/_doc/{id}
 
 ```
 #直接全部改了
@@ -261,7 +261,7 @@ PUT	请求 ： http://121.4.23.51:9200/{索引}/_doc/{id}
 
 ### 1.2局部修改
 
-PUT	请求 ： http://121.4.23.51:9200/{索引}/_update/{id}
+PUT	请求 ： http://{ip}:9200/{索引}/_update/{id}
 
 ```
 #入参
@@ -274,7 +274,7 @@ PUT	请求 ： http://121.4.23.51:9200/{索引}/_update/{id}
 
 ## 1.5 简单删除
 
-DELETE请求 ：http://121.4.23.51:9200/{索引}/_doc/{id}
+DELETE请求 ：http://{ip}:9200/{索引}/_doc/{id}
 
 ```
 #响应
@@ -297,10 +297,10 @@ DELETE请求 ：http://121.4.23.51:9200/{索引}/_doc/{id}
 
 ### 1.5条件查询
 
-GET请求 ： http://121.4.23.51:9200/{文档名字}/_search?q={条件}:{value}
+GET请求 ： http://{ip}:9200/{文档名字}/_search?q={条件}:{value}
 
 ```
-例：http://121.4.23.51:9200/shopping/_search?q=title:华为
+例：http://{ip}:9200/shopping/_search?q=title:华为
 {
     "took": 41,
     "timed_out": false,
@@ -336,7 +336,7 @@ GET请求 ： http://121.4.23.51:9200/{文档名字}/_search?q={条件}:{value}
 
 也可以这样写
 
-GET: http://121.4.23.51:9200/{文档名字}/_search
+GET: http://{ip}:9200/{文档名字}/_search
 
 ```
 #入参 效果一样
@@ -358,7 +358,7 @@ GET: http://121.4.23.51:9200/{文档名字}/_search
 
 ### 1.6 分页
 
-GET: http://121.4.23.51:9200/{文档名字}/_search
+GET: http://{ip}:9200/{文档名字}/_search
 
 ```
 {
@@ -375,7 +375,7 @@ GET: http://121.4.23.51:9200/{文档名字}/_search
 
 ### 1.3过滤字段
 
-GET: http://121.4.23.51:9200/{文档名字}/_search
+GET: http://{ip}:9200/{文档名字}/_search
 
 ```
 {
@@ -391,7 +391,7 @@ GET: http://121.4.23.51:9200/{文档名字}/_search
 
 ### 1.4排序
 
-GET: http://121.4.23.51:9200/{文档名字}/_search
+GET: http://{ip}:9200/{文档名字}/_search
 
 ```
 {
@@ -409,7 +409,7 @@ GET: http://121.4.23.51:9200/{文档名字}/_search
 
 ### 1.5多条件查询 AND OR
 
-GET: http://121.4.23.51:9200/{文档名字}/_search
+GET: http://{ip}:9200/{文档名字}/_search
 
 ```
 {
@@ -435,7 +435,7 @@ GET: http://121.4.23.51:9200/{文档名字}/_search
 
 ### 1.6范围
 
-GET: http://121.4.23.51:9200/{文档名字}/_search
+GET: http://{ip}:9200/{文档名字}/_search
 
 ```
 {
@@ -457,7 +457,7 @@ GET: http://121.4.23.51:9200/{文档名字}/_search
 
 ### 1.7全匹配
 
-GET: http://121.4.23.51:9200/{文档名字}/_search
+GET: http://{ip}:9200/{文档名字}/_search
 
 ```
 {
@@ -471,7 +471,7 @@ GET: http://121.4.23.51:9200/{文档名字}/_search
 
 ### 1.8高亮显示
 
-GET: http://121.4.23.51:9200/{文档名字}/_search
+GET: http://{ip}:9200/{文档名字}/_search
 
 ```
 {
@@ -491,7 +491,7 @@ GET: http://121.4.23.51:9200/{文档名字}/_search
 
 ## 1.6聚合操作
 
-GET: http://121.4.23.51:9200/{文档名字}/_search
+GET: http://{ip}:9200/{文档名字}/_search
 
 ```
 {
@@ -517,7 +517,7 @@ GET: http://121.4.23.51:9200/{文档名字}/_search
 
 当然,你需要先创建这个索引,然后再给他写入规则
 
-PUT请求 :  http://121.4.23.51:9200/{文档名字}/_mapping
+PUT请求 :  http://{ip}:9200/{文档名字}/_mapping
 
 ```
 {
@@ -620,7 +620,7 @@ PUT请求 :  http://121.4.23.51:9200/{文档名字}/_mapping
 
 ```
 RestHighLevelClient esClient = new RestHighLevelClient(
-        RestClient.builder(new HttpHost("121.4.23.51",9200,"http"))
+        RestClient.builder(new HttpHost("{ip}",9200,"http"))
 );
 ```
 
@@ -644,7 +644,7 @@ System.out.println(delete.isAcknowledged());
 ```
 //客户端
 RestHighLevelClient esClient = new RestHighLevelClient(
-        RestClient.builder(new HttpHost("121.4.23.51",9200,"http"))
+        RestClient.builder(new HttpHost("{ip}",9200,"http"))
 );
 //新增
 User user = new User("沙瑞金","男士","18037977200");
@@ -688,7 +688,7 @@ esClient.close();
 
 ```
 RestHighLevelClient esClient = new RestHighLevelClient(
-        RestClient.builder(new HttpHost("121.4.23.51",9200,"http"))
+        RestClient.builder(new HttpHost("{ip}",9200,"http"))
 );
 //批量插入
 BulkRequest bulkRequest = new BulkRequest();
@@ -923,7 +923,7 @@ import (
 )
 
 var Client *elastic.Client
-var host = "http://121.4.23.51:9200"
+var host = "http://{ip}:9200"
 
 //InitClient 初始化
 func InitClient() {
