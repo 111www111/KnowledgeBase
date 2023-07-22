@@ -164,3 +164,66 @@ ElasticSearch的构建依赖于Java,并在每个发行版中包含来自 JDK 维
 这里需要使用您自己的java版本,书写ES_JAVA_HOME的环境变量,如果你必须使用与捆绑的JVM不同版本的java,那么最好使用受支持的版本([查看](https://www.elastic.co/cn/support/matrix)),因为es与某些特定与OpenJDK的功能紧密耦合,所以如果版本不同可能无法正常运行,或者拒绝启动
 
 如果您使用的JVM不是捆绑的JVM，那么您有责任对与其安全问题和错误修复相关的公告做出反应，并且必须自己确定每次更新是否必要。相比之下，捆绑的JVM被视为Elasticsearch不可分割的一部分，这意味着Elastic负责保持其最新。捆绑JVM中的安全问题和错误被视为在Elasticsearch本身中。捆绑的 JVM 位于 Elasticsearch 主目录的 jdk 子目录中。如果使用您自己的 JVM，您可以删除此目录。
+
+## 本地运行ElastiSearch
+
+https://www.elastic.co/guide/en/elasticsearch/reference/8.8/run-elasticsearch-locally.html
+
+如果您想尝试在您自己的机器上使用ElasticSearch , 我们推荐docker 部署Es和KiBana,[获取docker 镜像](https://www.docker.elastic.co/)
+
+```
+从8.0版本开始,我们将默认启用安全配置,第一次启动Es,TLS加密会自动配置,为elastic 用户生成密码，并且Kibana注册Token,链接您的集群
+```
+
+1. 安装桌面版Docker,并且保证WSL中拥有4G内存
+
+```
+#作者配置
+#C:\Users\<UserName>\.wslconfig创建一个文件，配置如下所示。
+[wsl2]
+processors=8
+memory=4GB
+swap=8GB
+localhostForwarding=true
+```
+
+2. 启动ElasticSearch容器
+
+```shell
+docker network create elastic
+
+docker pull docker.elastic.co/elasticsearch/elasticsearch:8.8.2
+
+docker run --name elasticsearch --net elastic -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" -t docker.elastic.co/elasticsearch/elasticsearch:8.8.2
+```
+
+当您第一次启动 Elasticsearch 时 ,生成的弹性用户密码和 Kibana 注册令牌将输出到终端。 您可能需要在终端中向后滚动一点才能查看密码和注册令牌。 
+
+3. 复制生成的密码和注册的token并保存,他们只会在你第一次启动后的时候展示您将使用它们在 Elasticsearch 集群中注册 Kibana 并登录。 
+
+## 运行kibana
+
+kibana可以使您更容易操作并分析Es中的数据,可以通过可视化交互式管理数据
+
+1. 在新的终端会话中启动kibana,并且链接您的ES
+
+   ```
+   docker pull docker.elastic.co/kibana/kibana:8.8.2
+   
+   docker run --name kibana --net elastic -p 5601:5601 docker.elastic.co/kibana/kibana:8.8.2
+   ```
+
+   当您启动 Kibana 时，一个唯一的 URL 会输出到您的终端。 
+
+2. 要访问 Kibana，请在浏览器中打开生成的 URL。 
+
+   a. 粘贴您在启动 Elasticsearch 时复制的注册令牌，然后单击按钮将您的 Kibana 实例与 Elasticsearch 连接。 
+
+   b. 使用启动 Elasticsearch 时生成的密码以 Elastic 用户身份登录 Kibana。 
+
+## 发送请求到ES
+
+你可以通过REST风格的API,发送数据和其他的请求到ES,您可以使用任何发送 HTTP 请求的客户端与 Elasticsearch 交互,例如Elasticsearch语言客户端和curl。 Kibana 的开发者控制台提供了一种简单的方法来实验和测试请求。要访问控制台，请 **Management > Dev Tools**. 
+
+## 添加数据
+
