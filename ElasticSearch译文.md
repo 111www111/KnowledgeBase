@@ -108,7 +108,59 @@ ElasticSearch 可以根据您的想法通过分布式,构建高可用及其集�
 
 当然,这些取决于..
 
- 对于分片大小和为索引配置的主分片数量，存在许多性能考虑因素和权衡, 分片越多，维护这些索引的开销就越大。副本数越多,Es的自我平衡时间就会越长
+对于分片大小和为索引配置的主分片数量，存在许多性能考虑因素和权衡, 分片越多，维护这些索引的开销就越大。副本数越多,Es的自我平衡时间就会越长,查询大量的小分片会使得每个分片的处理速度更快,但是更多的查询意味着更多的开销,所以说,查询较少数量的较大分片可能会更快,这取决于以下几点
 
-TODO https://www.elastic.co/guide/en/elasticsearch/reference/8.8/scalability.html#it-depends
+- 目标是将平均分片大小保持在几 GB 到几十 GB 之间。对于基于时间的数据的用例，通常会看到 20GB 到 40GB 范围内的分片。 
+- 避免无数碎片问题。节点可以容纳的分片数量与可用节点的堆空间成正比。作为一般规则，每 GB 堆空间的分片数量应小于 20。 
 
+确定适合您的用例的最佳配置的最佳方法是通过[您自己的数据和查询进行测试。](https://www.elastic.co/cn/elasticon/conf/2016/sf/quantitative-cluster-sizing) 
+
+## 说到容灾
+
+集群的节点之间需要良好、可靠的连接.为了提供更好的连接， 通常会采用将节点放在同一个数据中心或者附近的数据中心(中心化),然而,为了保持高可用,需要避免任何情况下的单点故障,如果某个节点不幸挂掉了(例如停电),其他地点的服务需要能够接管整个烂摊子,那么答案就是 跨集群复制 Cross-cluster replication (CCR). 
+
+CCR 提供了一种自动将索引从主集群同步到可用作热备份(hot backup)的辅助远程集群的方法。 如果主集群不幸挂了,辅助集群可以接管服务,你可以通过使用CCR 创建辅助集群用来服务近期用户的读请求.
+
+跨集群复制是主动-被动的。 主集群上的索引是活动领导索引并处理所有写入请求。复制到辅助集群的索引是只读追随者。  
+
+## Care and feeding
+
+与任何企业系统一样，您需要工具来保护、管理和监控您的Elasticsearch集群。集成到Elasticsearch中的安全、监控和管理功能使您能够使用Kibana作为管理集群的控制中心。数据汇总和索引生命周期管理等功能可帮助您随着时间的推移智能地管理数据。
+
+# 安装ElasticSearch
+
+## 托管ElasticSearch服务
+
+Elastic Cloud 提供 Elasticsearch、Kibana 以及 Elastic 的可观测性、企业搜索和 Elastic Security 解决方案的所有功能，作为 AWS、GCP 和 Azure 上提供的托管服务。 
+
+可以[前往cloud](https://www.elastic.co/cloud/elasticsearch-service/signup?baymax=docs-body&elektra=docs)中注册免费试用版
+
+## 在机器上安装 ElasticSearch
+
+如果你想自己安装管理ElasticSearch,你可以尝试:
+
+- 在 Linux,MacOS 还有windows等系统的机器上运行ElasticSearch 
+- [在Docker 容器中运行Es](https://www.elastic.co/guide/en/elasticsearch/reference/8.8/docker.html)
+- 设置管理ES,kibana 等服务在[Kubernetes](https://www.elastic.co/guide/en/cloud-on-k8s/current/index.html)上
+
+## ElasticSearch 安装包
+
+ElasticSearch 提供下列的安装包格式
+
+注:安装的具体细节,可以查看以下地址中的细节部分,这里的翻译省略
+
+| 服务                    | 地址                                                         |
+| ----------------------- | ------------------------------------------------------------ |
+| Linux 与 MacOS (tar.gz) | tar.gz可以安装在任何linux发行版和macos上,[链接](https://www.elastic.co/guide/en/elasticsearch/reference/8.8/targz.html) |
+| windows (.zip)          | zip格式适合安装在windows上,[链接](https://www.elastic.co/guide/en/elasticsearch/reference/8.8/zip-windows.html) |
+| deb                     | deb格式的安装包适合在Debian,Ubuntu等系统上下,[链接](https://www.elastic.co/guide/en/elasticsearch/reference/8.8/deb.html) |
+| rpm                     | rpm适用于  Red Hat, Centos, SLES, 等系统,[链接](https://www.elastic.co/guide/en/elasticsearch/reference/8.8/rpm.html) |
+| docker                  | 镜像可用于es作为docker运行,可以从Es docker 下载,[链接](https://www.elastic.co/guide/en/elasticsearch/reference/8.8/docker.html) |
+
+## 关于JVM版本
+
+ElasticSearch的构建依赖于Java,并在每个发行版中包含来自 JDK 维护者 (GPLv2+CE) 的 OpenJDK 捆绑版本。捆绑的 JVM 是推荐的 JVM。 
+
+这里需要使用您自己的java版本,书写ES_JAVA_HOME的环境变量,如果你必须使用与捆绑的JVM不同版本的java,那么最好使用受支持的版本([查看](https://www.elastic.co/cn/support/matrix)),因为es与某些特定与OpenJDK的功能紧密耦合,所以如果版本不同可能无法正常运行,或者拒绝启动
+
+如果您使用的JVM不是捆绑的JVM，那么您有责任对与其安全问题和错误修复相关的公告做出反应，并且必须自己确定每次更新是否必要。相比之下，捆绑的JVM被视为Elasticsearch不可分割的一部分，这意味着Elastic负责保持其最新。捆绑JVM中的安全问题和错误被视为在Elasticsearch本身中。捆绑的 JVM 位于 Elasticsearch 主目录的 jdk 子目录中。如果使用您自己的 JVM，您可以删除此目录。
