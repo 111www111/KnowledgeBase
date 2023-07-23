@@ -289,4 +289,105 @@ GET customer/_search
 
 # 配置ElasticSearch
 
-TODO https://www.elastic.co/guide/en/elasticsearch/reference/8.8/settings.html
+ES具有良好的默认配置,所以需要我们配置的东西很少,可以使用集群更新设置 API 在正在运行的集群上[更改](https://www.elastic.co/guide/en/elasticsearch/reference/8.8/cluster-update-settings.html)大多数设置。 
+
+配置文件应包含特定于节点的设置(例如node.name和路径),或节点加入集群所需的设置，例如 cluster.name 和 network.host。 
+
+## 配置文件位置
+
+Es拥有三个配置文件:
+
+1. **elasticsearch.yml** 用于配置Es
+2. **jvm.options **用于Es的JVM设置
+3. **log4j2.properties** 用于配置Es 日志
+
+这些配置文件位于config的目录下,其默认位置取决于安装是来自存档发行版（tar.gz 或 zip）还是软件包发行版(Debian 或 RPM 软件包).对于默认版本,config 目录位置默认为 $ES_HOME/config。 config 目录的位置可以通过 ES_PATH_CONF 环境变量更改，如下所示： 
+
+```
+ES_PATH_CONF=/path/to/my/config ./bin/elasticsearch
+```
+
+或者，您可以通过命令行或 shell 配置文件导出 ES_PATH_CONF 环境变量 
+
+配置目录位置默认为 /etc/elasticsearch。 config 目录的位置也可以通过 ES_PATH_CONF 环境变量进行更改，但请注意，在 shell 中设置此位置是不够的。相反，此变量源自 /etc/default/elasticsearch （对于 Debian 软件包）和 /etc/sysconfig/elasticsearch （对于 RPM 软件包）。您将需要相应地编辑这些文件之一中的 ES_PATH_CONF=/etc/elasticsearch 条目以更改配置目录位置。 
+
+## 配置文件格式
+
+这些配置文件的书写格式均为YMAL,以下是更改数据和日志文件的示例
+
+```
+path:
+    data: /var/lib/elasticsearch
+    logs: /var/log/elasticsearch
+```
+
+也可以按照如下格式展开设置
+
+```
+path.data: /var/lib/elasticsearch
+path.logs: /var/log/elasticsearch
+```
+
+在 YAML 中，您可以将非标量值格式化为序列： 
+
+```
+discovery.seed_hosts:
+   - 192.168.1.10:9300
+   - 192.168.1.11
+   - seeds.mydomain.com
+```
+
+虽然不太常见，但您也可以将非标量值格式化为数组： 
+
+```
+discovery.seed_hosts: ["192.168.1.10:9300", "192.168.1.11", "seeds.mydomain.com"]
+```
+
+## 使用环境变量替换编辑
+
+环境变量中所引用的 ${...} 也可以在配置文件中引用
+
+```
+node.name:    ${HOSTNAME}
+network.host: ${ES_NETWORK_HOST}
+```
+
+不过,环境变量的值必须是简单的字符串,使用逗号分隔的字符串提供 Elasticsearch 将解析为列表的值。例如，Elasticsearch 会将以下字符串拆分为 ${HOSTNAME} 环境变量的值列表： 
+
+```
+export HOSTNAME="host1,host2"
+```
+
+## 集群与节点的类型设置
+
+集群与节点的设置可以根据配置方式进行分类:
+
+动态的:
+
+​	你可以使用集群更新[设置 API](https://www.elastic.co/guide/en/elasticsearch/reference/8.8/cluster-update-settings.html) 在正在运行的集群上配置和更新动态设置。您还可以使用elasticsearch.yml 在未启动或关闭的节点上本地配置动态设置。 
+
+​	使用集群更新设置 API 进行的更新可以是持久性的（在集群重新启动时应用），也可以是暂时性的（在集群重新启动后重置）。您还可以使用 API 为临时或持久设置分配空值来重置它们。 
+
+​	如果您使用多种方法配置相同的设置，Elasticsearch 将按以下优先顺序应用设置： 
+
+- 瞬态设置 
+
+- 持续设置 
+
+- elasticsearch.yml 
+
+- 设置 默认设定值 
+
+  举个例子,您可以应用瞬态设置来覆盖持久设置或elasticsearch.yml 设置。但是，对 elasticsearch.yml 设置的更改不会覆盖定义的瞬态或持久设置。 
+
+如果您使用 Elasticsearch Service，请使用[用户设置](https://www.elastic.co/guide/en/cloud/current/ec-add-user-settings.html) 功能来配置所有集群设置。此方法可让 Elasticsearch Service 自动拒绝可能破坏集群的不安全设置。
+
+如果您在自己的硬件上运行 Elasticsearch，请使用 [集群更新设置](https://www.elastic.co/guide/en/elasticsearch/reference/8.8/cluster-update-settings.html) API 来配置动态集群设置。仅用于elasticsearch.yml静态集群设置和节点设置。该 API 不需要重新启动并确保所有节点上的设置值相同
+
+我们不再建议使用临时集群设置。请改用持久集群设置。如果集群变得不稳定，瞬态设置可能会意外清除，从而导致可能出现不需要的集群配置。请参阅[瞬态设置迁移指南](https://www.elastic.co/guide/en/elasticsearch/reference/8.8/transient-settings-migration-guide.html)。 
+
+静态设置只能在未启动或关闭的节点上使用 进行配置 `elasticsearch.yml`。 必须在集群中的每个相关节点上设置静态设置。 
+
+# 重要的ElasticSearch配置
+
+https://www.elastic.co/guide/en/elasticsearch/reference/8.8/important-settings.html
