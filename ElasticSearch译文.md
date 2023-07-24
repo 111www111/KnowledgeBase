@@ -391,3 +391,5 @@ export HOSTNAME="host1,host2"
 # 重要的ElasticSearch配置
 
 https://www.elastic.co/guide/en/elasticsearch/reference/8.8/important-settings.html
+
+配置
