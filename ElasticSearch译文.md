@@ -392,4 +392,24 @@ export HOSTNAME="host1,host2"
 
 https://www.elastic.co/guide/en/elasticsearch/reference/8.8/important-settings.html
 
-配置
+ElasticSearch 只需要很少的配置就可以启动运行,但在生产中使用集群之前必须考虑许多事项
+
+- [路径设置](https://www.elastic.co/guide/en/elasticsearch/reference/8.8/important-settings.html#path-settings)
+- [集群名称设置](https://www.elastic.co/guide/en/elasticsearch/reference/8.8/important-settings.html#cluster-name)
+- [节点名称设置](https://www.elastic.co/guide/en/elasticsearch/reference/8.8/important-settings.html#network.host)
+- [网络映射设置](https://www.elastic.co/guide/en/elasticsearch/reference/8.8/important-settings.html#network.host)
+- [发现( Discovery )设置](https://www.elastic.co/guide/en/elasticsearch/reference/8.8/important-settings.html#discovery-settings)
+- [堆大小设置](https://www.elastic.co/guide/en/elasticsearch/reference/8.8/important-settings.html#heap-size-settings)
+- [JVM 堆转存路径设置](https://www.elastic.co/guide/en/elasticsearch/reference/8.8/important-settings.html#heap-dump-path)
+- [GC日志设置](https://www.elastic.co/guide/en/elasticsearch/reference/8.8/important-settings.html#gc-logging)
+- [临时目录设置](https://www.elastic.co/guide/en/elasticsearch/reference/8.8/important-settings.html#es-tmpdir)
+- [JVM 致命ERROR日志设置](https://www.elastic.co/guide/en/elasticsearch/reference/8.8/important-settings.html#error-file-path)
+- [集群备份设置](https://www.elastic.co/guide/en/elasticsearch/reference/8.8/important-settings.html#error-file-path)
+
+我们的ElasticSearch 云服务可以自动设置这些参数,默认情况下您的集群已做好生产准备。 
+
+## 路径设置
+
+Elasticsearch 将索引的数据写入索引，并将数据流写入数据目录 路径。 Elasticsearch 将其自己的应用程序日志写入日志目录，其中包含有关集群运行状况和操作的信息。 
+
+在MacOS的tar.gz , Linux的tar.gz ,windows.zip中安装,默认人情况下,数据(`data`)和日志(`logs`)是$ES_HOME的子目录,但是升级ES服务文件会有被删除的风险
