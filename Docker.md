@@ -671,6 +671,32 @@ docker image prune
 
 ## 7.2 下载安装
 
+##### 方法1
+
+从 [官方 GitHub Release](https://github.com/docker/compose/releases) 处直接下载编译好的二进制文件即可。
+
+通过curl命令下载对应的二进制包。
+
+```bash
+$ sudo curl -L https://github.com/docker/compose/releases/download/1.28.6/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+$ sudo chmod +x /usr/local/bin/docker-compose
+```
+
+
+查看版本号
+
+```
+docker-compose version
+```
+
+卸载: 二进制包方式安装的，删除二进制文件即可。
+
+```bash
+rm /usr/local/bin/docker-compose
+```
+
+##### 方法2 (手动下载二进制包)
+
 1. 去github官网搜索docker compose，下载1.24.1版本的Docker-Compose
 
 ```
@@ -802,3 +828,20 @@ copy demo.war /usr/local/tomcat/webapps
 
 ```
 
+# 8. 踩坑记录
+
+## 8.1 不要使用腾讯云服务器docker镜像
+
+使用了腾讯云自带docker镜像遇到如下问题, 可能是设置了安全权限
+
+后续自己重新安装了docker解决了问题
+
+1. 遇到了部分jdk镜像在docker start的时候Java应用无法创建gc线程的问题, 以下是日志
+
+```
+(0.006s][warning]los,thread] Failed to start thread "gc Thread#g" -pthread_create failed (EPERM) for attributes: stacksize: 1024k, guardsize: 4k, detached.
+There is insufficient memory for the Java Runtime Environment to continue.#Cannot create workerGc thread. Out of system resources .An error report file with more information is saved as:
+# //hs_err_pid1.1o0
+```
+
+2. 遇到了docker容器内部无法访问公网的问题
