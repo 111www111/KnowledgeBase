@@ -118,6 +118,10 @@
 
 ![image-20230816225941049](images/image-20230816225941049.png)
 
+​		参考,学习过程中的分区挂载点配置,如下图所示
+
+![image-20230817201806226](images/image-20230817201806226.png)
+
 #### 2.5 密码原则
 
 - 复杂性: 
@@ -135,3 +139,74 @@
   - 建议你的超复杂密码记得住,比如 flzx_3QC、DF_3mzPite
 
 ### 3. 远程登录
+
+#### 3.1 配置IP地址
+
+​	考虑到你在这里没有vi or vim的编辑经验,那么假如你的Centos版本是6.3+,你就可以直接通过下面的指令设置IP地址,注意 setup 只有Centos有
+
+```
+[root@localhost ~]# setup
+#通过setup工具设置IP地址,注意激活onboot=yes
+[root@localhost ~]# service network restart
+#重启网络服务
+```
+
+如果你会用虚拟机,那么就是直接梭哈
+
+```
+vi /etc/sysconfig/network-scripts/ifcfg-ens33
+```
+
+这里需要注意,1.2中选择的网卡根据网卡设置相对应的网络配置
+
+```
+TYPE="Ethernet"
+PROXY_METHOD="none"
+BROWSER_ONLY="no"
+BOOTPROTO="static"
+DEFROUTE="yes"
+IPV4_FAILURE_FATAL="no"
+IPV6INIT="yes"
+IPV6_AUTOCONF="yes"
+IPV6_DEFROUTE="yes"
+IPV6_FAILURE_FATAL="no"
+IPV6_ADDR_GEN_MODE="stable-privacy"
+NAME="ens33"
+UUID="833c0800-3d58-4b9c-b7ab-709d607d48d3"
+DEVICE="ens33"
+ONBOOT="yes"
+//这里的配置根据1.2中的网卡设置即可
+IPADDR=192.168.10.101
+GATEWAY=192.168.10.2
+DNS1=192.168.10.2
+```
+
+#### 3.2 安装日志
+
+```
+/root/install.log : 储存了安装在系统中的软件包及其版本信息
+/root/install.log.syslog : 存储了安装过程中留下的时间记录
+/root/anaconda-ks.cfg : 以Kickstart配置文件的格式记录安装过程中设置的选项信息,这玩意后续可以当模板用,做集群
+```
+
+### 4. 一些Linux的注意事项
+
+1. Linux是严格区分大小写的
+2. Linux 一切皆文件,都是一文件的形式保存的,硬件设备也是文件,Linux的设备文件保存在/dev/目录中,硬盘文件的/dev/sd[a-p]
+3. Linux不靠扩展名区分文件类型,而是靠权限位标识来确定文件类型的,常见的文件类型只有 普通文件、 目录、链接文件、块设备文件、字符设备文件等集中,Linux的可执行文件不过就是普通文件被赋予了可执行权限,但是有些特殊文件要求写扩展名称用来分辨
+   - 压缩包:Linux下常见的压缩文件有 .gz 、.zip 、.tar.gz等,方便判断
+   - 二进制软件包: Centos中使用的而二进制安装包是RPM包,所有的RPM包都用 .RPM结尾,方便判断
+   - 程序脚本: shell脚本一般以 .sh 结尾,还有其他例如 .c 结尾的C语言文件等
+   - 网页文件: 一般以 .html 或者 .php结尾,按照网页服务器的要求设置
+4. Linux中所有的存储设备都必须在挂载之后使用 
+
+### 5.Linux的目录结构
+
+| 目录名称  | 目录作用                                                     |
+| --------- | ------------------------------------------------------------ |
+| /bin/     | 存放系统命令的目录,普通用户和超级用户都可以执行,是/usr/bin目录的软连接 |
+| /sbin/    | 存放系统命令的目录,只有超级用户才可以执行,是/usr/sbin目录的软连接 |
+| /usr/sbin | 存放系统命令的目录,只有超级用户才可以执行                    |
+| /usr/bin  | 存放系统命令的目录,普通用户和超级用户都可以执行              |
+| /boot     | 系统启动目录,保存与系统启动相关的文件,比如内核文件和启动引导程序(grub) |
+
