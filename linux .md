@@ -1,4 +1,4 @@
-# ps Hadoop100 等环境，这里！
+
 
 ## 硬件部分
 
@@ -189,4 +189,104 @@ scp  -r   $pdir/$fname          $user@$host:$pdir/$fname
 
 注意：添加端口后，必须用命令firewall-cmd --reload重新加载一遍才会生效 
 
-（5）关闭防火墙端口：firewall-cmd --zone=public --remove-port=9200/tcp --permanent                
+（5）关闭防火墙端口：firewall-cmd --zone=public --remove-port=9200/tcp --permanent              
+
+# 清理磁盘空间
+
+## 一、查看磁盘容量
+
+1. 显示磁盘空间使用情况
+
+```
+df -lh  
+```
+
+![image-20230826221107726](images/image-20230826221107726.png)
+
+2. 查看当前文件夹大小
+
+```
+du -sh
+```
+
+![image-20230826221245382](images/image-20230826221245382.png)
+
+3. 查看当前所在目录的各子目录磁盘空间占用情况
+
+```
+du -sh *
+```
+
+![image-20230826221543836](images/image-20230826221543836.png)
+
+4. 列出指定目录及其子目录中的所有文件和目录的大小，并按照文件大小从大到小排序，然后仅显示前 10 个最大的文件和目录
+
+```
+du -a /root/data | sort -n -r | head -n 10
+```
+
+![image-20230826224456724](images/image-20230826224456724.png)
+
+5. 根据文件大小查找
+
+/root/data目录下查找大小大于 100MB 的文件
+
+```
+find /root/data -size +100M -ls
+```
+
+![image-20230826225131360](images/image-20230826225131360.png)
+
+在 /root/data 目录下搜索大小大于 100MB 且小于 200MB 的文件
+
+```
+find /root/data -size +100M -a -size -200M -ls
+```
+
+![image-20230826225419256](images/image-20230826225419256.png)
+
+## 二、清理磁盘
+
+1. 将文件内容清空
+
+```
+truncate -s 0 文件名
+```
+
+![image-20230826222954743](images/image-20230826222954743.png)
+
+2. 删除文件 (谨慎!)
+
+删除当前目录下以.log结尾的文件和文件夹
+
+```
+rm -rf *.log
+```
+
+![image-20230826223552510](images/image-20230826223552510.png)
+
+## 三、清理Mysql  binlog
+
+开发环境测试时有大批量数据插入,删除操作,binlog比较大, 又用不到想要清理一下. 不要直接删除, 进入mysql用mysql的命令去删
+
+以下是清理过后的可以看到日志被删除了
+
+![image-20230826234618627](images/image-20230826234618627.png)
+
+1. 显示binglog列表
+
+```
+SHOW BINARY LOGS;
+```
+
+![image-20230826234813570](images/image-20230826234813570.png)
+
+2. 删除binlog
+
+删除binlog.000008之前的binlog
+
+```
+purge BINARY LOGS to 'binlog.000008';
+```
+
+![image-20230826235234867](images/image-20230826235234867.png)
