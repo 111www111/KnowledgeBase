@@ -296,3 +296,120 @@ DNS1=192.168.10.2
 常规的操作命令(cat,touch,mkdir,cd,ls)这里跳过
 
 #### 6.2 ln链接
+
+链接命令,对于初学者来说比较复杂,如果你是已经入门的开发者,那就是两个文件指向了一个地址,了解即可
+
+关于链接,首先要了解Linux的文件系统,简单可以理解为 key -> value ,一个地址指向一个文件,然后一个文件名指向一个地址,这样可以通过一个目录找到一个文件地址,从而找到这个文件块,那么如果当两个文件名(A,B)指向同一个地址时,互相均可以改动文件块
+
+参考以下demo
+
+```
+[root@localhost ~]# touch fileA
+[root@localhost ~]# ln fileA fileB
+[root@localhost ~]# cat fileA
+//fileA is null
+[root@localhost ~]# cat fileb
+//fileB is null
+[root@localhost ~]# echo insert one row into fileb >> fileB 
+[root@localhost ~]# cat fileA 
+insert one row into fileb
+[root@localhost ~]# 
+
+```
+
+值得一提的是 ,他们的地址都是一样的
+
+```
+[root@localhost ~]# ls -il
+25166215 -rw-r--r--. 2 root root    0 8月  23 21:21 fileA
+25166215 -rw-r--r--. 2 root root    0 8月  23 21:21 fileb
+```
+
+那么在上面的demo中,我们得知了一个新的命令:ln
+
+```
+[root@localhost ~]# ln --help
+用法：ln [选项]... [-T] 目标 链接名	(第一种格式)
+　或：ln [选项]... 目标		(第二种格式)
+　或：ln [选项]... 目标... 目录	(第三种格式)
+　或：ln [选项]... -t 目录 目标...	(第四种格式)
+```
+
+那么在这里,我们可以思考,假设我删除了其中一个文件,那么会不会影响到另一个文件的读取写入呢?
+
+这里引入一个新的概念,硬链接与软连接的区别
+
+**硬链接**:
+
+1. 源文件和硬链接拥有**相同**的Inode和Block
+2. 修改任意一个文件,另一个都改变
+3. 删除任意一个文件,另一个都可用
+4. 硬链接标记不清晰,比较难以确认链接文件位置,不建议使用
+5. 硬链接不能链接目录,不能跨分区链接
+
+**软链接**:
+
+1. 源文件和硬链接拥有**不同**的Inode和Block
+2. 修改任意一个文件,另一个都改变
+3. 删除软连接,原文件不受影响,删除源文件,软连接报废
+4. 软连接没有实际数据,只保存源文件的地址,不管原文件多大,软连接大小不变
+5. 软连接的权限是最大权限,但是最终访问问需要参考源文件权限
+6. 可以跨分区,可以链接目录,特征明显
+
+上面概念,参考深拷贝与浅拷贝
+
+### 7. 基本权限管理
+
+#### 1.权限的介绍
+
+​	**权限位置的含义**
+
+​	我们可以看一下,查看权限时候的样子
+
+```
+[root@localhost /]# ll
+lrwxrwxrwx.   1 root root    7 8月  17 21:34 bin -> usr/bin
+```
+
+"lrwxrwxrwx." 这一坨就是屈权限标志位,意义如下:
+
+![image-20230826211017559](images/image-20230826211017559.png)
+
+基本权限为 10 位,
+
+1. 第一位,文件类型,常见如下
+   - **"-"**:普通文件
+   - **"b"**: 块设备文件,存储设备一般都是这种文件,例如分区文件/dev/sda1
+   - **"c"**:字符设备文件,输入设备常用例如鼠标键盘
+   - **"d"**: 目录文件
+   - **"l"**: 软连接文件
+   - **"p"**: 管道符文件,一种少见的特殊设备文件
+   - **"s"**: 套接字文件,一些服务支持Socket访问会产生这样的文件
+2. 剩下九位,每三位一组,分别代表,所属者(u),所有组(g),其他人的权限(o),对应的角色每有一个字母 对应着一个权限,如果对应位置是 -  则代表无此项权限
+   - **"r"** : 代表read 只读
+   - **"w"**: 代表 write 写入
+   - **"x"**: 代表 execute,执行权限
+
+至于后面这个点,经过 linux 的文档查询得知为该文件受SELinux(美国国安局开发的安全系统)保护,知道就行影响不大
+
+#### 2.基本权限命令
+
+```
+命令名称: chmod (change file mode bits)
+所在路径: /bin/chmod
+执行权限: 所有用户
+命令格式:
+[root@localhost /]# chmod [选项] 权限模式 文件名
+选项: 
+	  -c, --changes          like verbose but report only when a change is made
+  -f, --silent, --quiet  suppress most error messages
+  -v, --verbose          output a diagnostic for every file processed
+      --no-preserve-root  do not treat '/' specially (the default)
+      --preserve-root    fail to operate recursively on '/'
+      --reference=RFILE  use RFILE's mode instead of MODE values
+  -R, --recursive        change files and directories recursively
+      --help		显示此帮助信息并退出
+      --version		显示版本信息并退出
+
+```
+
