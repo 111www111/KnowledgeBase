@@ -85,7 +85,7 @@ rs = stmt.executeQuery("SELECT * FROM your_table_here");
 连接上加上参数 jdbc:mysql://localhost/?**useCursorFetch=true**
 
 ```
-	import org.apache.ibatis.annotations.Options;
+    import org.apache.ibatis.annotations.Options;
     import org.apache.ibatis.annotations.Param;
     import org.apache.ibatis.annotations.Select;
     import org.apache.ibatis.cursor.Cursor;    
@@ -126,7 +126,7 @@ codeService.saveBatch(codeList, 7500);
 mysql的Prepared Statement(预处理语句)分为两种, 一种是ClientPreparedStatement, 另一种是ServerPreparedStatement, 默认情况下是使用的ClientPreparedStatement, 如果要使用ServerPreparedStatement则需要增加连接属性 useServerPrepStmts=true.
 如果配置了useCursorFetch=true参数则useServerPrepStmts会自动设置为true
 
-![image-20230903134744184](images\image-20230903134744184.png)
+![image-20230903134744184](images/image-20230903134744184.png)
 
 以上是mysql的jdbc驱动ServerPreparedStatement的UML图, 可以看出它继承了ClientPreparedStatement
 
@@ -138,13 +138,13 @@ mysql的Prepared Statement(预处理语句)分为两种, 一种是ClientPrepared
 
 `ClientPreparedStatement#executeBatchInternal`
 
-![image-20230903002343395](images\image-20230903002343395.png)
+![image-20230903002343395](images/image-20230903002343395.png)
 
 `ClientPreparedStatement#executeBatchedInserts`
 
-![image-20230903002505810](images\image-20230903002505810.png)
+![image-20230903002505810](images/image-20230903002505810.png)
 
-![image-20230903003429928](images\image-20230903003429928.png)
+![image-20230903003429928](images/image-20230903003429928.png)
 
 该方法用于处理batchedStatement变量, 会对sql语句进行处理
 
@@ -204,11 +204,11 @@ com.mysql.cj.jdbc.ClientPreparedStatement: INSERT INTO code ( id, updata_user, c
 
 ServerPreparedStatement类是ClientPreparedStatement的子类, 在批量插入逻辑中对setOneBatchedParameterSet方法进行了重写, 前面的逻辑是一样的
 
-![image-20230903135646751](images\image-20230903135646751.png)
+![image-20230903135646751](images/image-20230903135646751.png)
 
 在该方法中, 并不会对语句本身进行处理写,而是解析并保存它的绑定参数
 
-![image-20230903140633844](images\image-20230903140633844.png)
+![image-20230903140633844](images/image-20230903140633844.png)
 
 ## 三、jdbc连接参数解释
 
