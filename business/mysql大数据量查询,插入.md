@@ -111,6 +111,10 @@ rs = stmt.executeQuery("SELECT * FROM your_table_here");
 
 [简书](https://www.jianshu.com/p/7ef5499d5f60), 这篇文章有对PreparedStatement的原理进行解释
 
+主键建议使用雪花算法等有序的算法, 而不是用uuid, uuid会导致页分裂, 严重影响插入速度
+
+有序的主键可以确保新插入的数据行在物理存储上是连续的，减少了页分裂的可能性，提高了插入速度和性能。
+
 ### 1. mybatis plus中的实现
 
 增加连接属性: rewriteBatchedStatements=true, 默认为false, 如果不加入该参数, 批量插入不会生效, 本质上是mysql的jdbc驱动不会对其进行优化
