@@ -519,3 +519,157 @@ linux 的固安房标准算法为二进制进行卢欧几与非运算才能得�
 系统默认的umask设置
 
 ![image-20230903204807117](images/image-20230903204807117.png)
+
+
+
+### 9. 帮助命令
+
+看看这章,观察一下linux官方的解释,比国内c**n不知道好了多少
+
+#### 1. man 命令
+
+man是最常见的帮助命令,也是Linux最主要的
+
+```
+format and display the on-line manual pages
+Usage: man [OPTION...] [章节] 手册页...
+
+  -C, --config-file=文件   使用该用户设置文件
+  -d, --debug                输出调试信息
+  -D, --default              将所有选项都重置为默认值
+      --warnings[=警告]    开启 groff 的警告
+```
+
+**man命令涉及的快捷键**
+
+| 快捷键  | 作用                                                 |
+| ------- | ---------------------------------------------------- |
+| ↑       | 向上一行                                             |
+| ↓       | 向下一行                                             |
+| Pg Up   | 向上翻一页                                           |
+| Pg Dn   | 向下翻一页                                           |
+| g       | 移动到第一页                                         |
+| G       | 移动到最后一页                                       |
+| q       | 推出                                                 |
+| /字符串 | 从当前页向下搜索                                     |
+| ?字符串 | 从当前页向上搜索                                     |
+| n       | 当搜索字符串,使用找到下一个目标字符串                |
+| N       | 当搜索字符串,使用找到反向目标字符串,根据搜索方式决定 |
+
+**man命令的帮助级别,这里知道就行**
+
+| 级别 | 作用                                       |
+| ---- | ------------------------------------------ |
+| 1    | 普通用户可以执行的系统命令和可执行文件帮助 |
+| 2    | 内核可以调用的函数和工具帮助               |
+| 3    | C语言函数帮助                              |
+| 4    | 设备和特殊文件帮助                         |
+| 5    | 配置文件帮助                               |
+| 6    | 游戏帮助(Linux 个人版)                     |
+| 7    | 杂项帮助                                   |
+| 8    | 超级用户可以执行的系统命令帮助             |
+| 9    | 内核帮助                                   |
+
+```
+#查看命令拥有哪个级别的帮助
+man -f [命令] 或者 whatis [命令]
+
+#查看命令相关的所有帮追
+man -k [命令] 或者 apropos [命令]
+```
+
+
+
+#### 2. info 命令
+
+info 命令的帮助信息是一套完整的资料,每个命令的帮助信息只是这套问问完整资料中的某个小章节
+
+**
+
+| 快捷键 | 作用                      |
+| ------ | ------------------------- |
+| ↑      | 向上一行                  |
+| ↓      | 向下一行                  |
+| Pg Up  | 向上翻一页                |
+| Pg Dn  | 向下翻一页                |
+| g      | 移动到第一页              |
+| G      | 移动到最后一页            |
+| q      | 推出                      |
+| tab    | 在有"*"符号的节点间且耳环 |
+| enter  | 进入有"*"符号的子页面查看 |
+| u      | 进入上一层                |
+| n      | 进入下一小节              |
+| p      | 进入上一小节              |
+| ?      | 查看帮助                  |
+| q      | 退出                      |
+
+
+
+#### 3. help 命令
+
+help 只能获得Shell内置的命令帮助,基本信息:
+
+- 所在路径: Shell 内置命令
+- 执行权限: 所有用户
+- 用来显示Shell内置命令的帮助,可以使用type来区分内置或者外部命令
+
+#### 4. --help 选项
+
+绝大多数命令都可以使用此命令查看帮助,也是一种快捷的方法,例如:
+
+```
+[root@localhost wyt]# ll --help
+用法：ls [选项]... [文件]...
+List information about the FILEs (the current directory by default).
+Sort entries alphabetically if none of -cftuvSUX nor --sort is specified.
+Mandatory arguments to long options are mandatory for short options too.
+  -a, --all			不隐藏任何以. 开始的项目
+  -A, --almost-all		列出除. 及.. 以外的任何项目
+      --author			与-l 同时使用时列出每个文件的作者
+  -b, --escape			以八进制溢出序列表示不可打印的字符
+      --block-size=SIZE      scale sizes by SIZE before printing them; e.g.,
+                               '--block-size=M' prints sizes in units of
+                               1,048,576 bytes; see SIZE format below
+...
+```
+
+
+
+### 10. 搜索命令
+
+#### 1. whereis
+
+​	whereis 是搜索系统命令的命令,whereis命令不能搜索普通文件,只能查找二进制命令,源文件,以及帮助文档的命令
+
+```
+[root@localhost wyt]# whereis vi
+vi: /usr/bin/vi /usr/share/man/man1/vi.1.gz
+[root@localhost wyt]# whereis ls
+ls: /usr/bin/ls /usr/share/man/man1/ls.1.gz
+```
+
+#### 2. which
+
+​	which 也是搜索系统命令的命令,只能查找二进制命令,区别在于
+
+- whereis 可以查找命令的同时,查找到帮助文档的位置
+- which 可以查找到别名
+
+```
+[root@localhost wyt]# which ls
+alias ls='ls --color=auto'
+	/usr/bin/ls
+[root@localhost wyt]# whereis ls
+ls: /usr/bin/ls /usr/share/man/man1/ls.1.gz
+```
+
+#### 3. locate 
+
+locate 命令是可以按照文件名搜索普通文件的命令。讲道理这个我没用过
+
+- 优点: 按照数据库搜索，搜索速度快，消耗资源小。数据库位置/var/lib/mlocate/mlocate.db
+- 缺点:只能按照文件名来搜索文件，而不能执行更复杂的搜索，比如按照权限、大小、修改时间等搜索文件
+
+#### 4. find
+
+todo
