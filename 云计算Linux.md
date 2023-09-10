@@ -712,7 +712,7 @@ Linux 中 文件有访问时间(atime) ,数据修改时间(mtime) , 状态修改
 
 ![image-20230905225253944](images/image-20230905225253944.png)
 
-#### 4.4 按照权限搜索
+##### 4.4 按照权限搜索
 
 命令格式
 
@@ -723,3 +723,395 @@ Linux 中 文件有访问时间(atime) ,数据修改时间(mtime) , 状态修改
 	-perm [+|-]权限模式: [查找包含权限的文件|查找包含任意一个权限的文件]
 ```
 
+##### 4.5 按照所有者和所属组搜索
+
+```
+[root@localhost ~]# find 搜索路径 [选项] 搜索内容
+选项:
+	-uid   用户id: 用户id搜索文件
+	-git   组id  : 组id搜索文件
+	-user  用户名: 用户名搜索文件
+	-group 组名  : 组名搜索文件
+	-nouser      : 查找没有所有者的文件
+```
+
+一般情况下linux 都是有所有者和所属组的,除了外来文件,例如 光盘U盘中的文件,还有手工源码包安装的文件
+
+##### 4.6 按照文件类型搜索
+
+```
+[root@localhost ~]# find 搜索路径 [选项] 搜索内容
+选项:
+	-type d:查找目录
+	-type f:查找文件
+	-type l:查找软连接文件
+```
+
+##### 4.7 逻辑运算符
+
+```
+[root@localhost ~]# find 搜索路径 [选项] 搜索内容
+选项:
+	-a  : and
+	-o  : or
+	-not: not
+```
+
+#### 5. grep补充命令
+
+grep的作用是在文件中提取和匹配符合条件的字符串行
+
+```
+root@localhost ~]# grep [选项]... PATTERN [FILE]...
+在每个 FILE 或是标准输入中查找 PATTERN。
+默认的 PATTERN 是一个基本正则表达式(缩写为 BRE)。
+例如: grep -i 'hello world' menu.h main.c
+
+正则表达式选择与解释:
+  -E, --extended-regexp     PATTERN 是一个可扩展的正则表达式(缩写为 ERE)
+  -F, --fixed-strings       PATTERN 是一组由断行符分隔的定长字符串。
+  -G, --basic-regexp        PATTERN 是一个基本正则表达式(缩写为 BRE)
+  -P, --perl-regexp         PATTERN 是一个 Perl 正则表达式
+  -e, --regexp=PATTERN      用 PATTERN 来进行匹配操作
+  -f, --file=FILE           从 FILE 中取得 PATTERN
+  -i, --ignore-case         忽略大小写
+  ...
+```
+
+find 与 grep 的区别 -> find 用于在系统中搜索符合条件的文件名,而 grep 用于在文件中搜索符合条件的字符
+
+#### 6. 管道符
+
+命令格式 :  命令1 **|** 命令2
+
+命令1的输出对象 作为 命令2的操作对象
+
+
+
+### 11.压缩与解压
+
+​	在linux 中可以识别的压缩格式有很多,例如"zip","gz","bz2","tar","tar.gz"等等
+
+#### 1. zip格式
+
+zip是windows中最常用的压缩格式,linux 也可以正确的识别zip格式
+
+``` 
+centos安装zip命令:yum install zip
+Ubuntu安装zip命令:apt-get install zip
+
+#解压命令
+[root@localhost ~]# unzip [选项] 压缩包名称
+选项:
+	-d : 解压至目录
+#压缩命令
+[root@localhost ~]# zip [选项] 压缩包名称 源文件或者源目录
+选项:
+	-r : 递归至目录(recurse into directories)
+```
+
+#### 2. gz格式
+
+这个命令,建议别打包,恶心的一P
+
+```
+[root@localhost ~]# gzip [选项]... [文件]...
+选项:
+	-c : 将压缩数据输出到标准输出,用于保留原文件
+	-d : 解压缩
+	-r : 压缩目录
+```
+
+#### 3. bz2 格式
+
+**这哥们不能压缩目录**
+
+```
+centos安装zip命令:yum install bzip2
+Ubuntu安装zip命令:apt-get install bzip2
+
+#解压命令
+[root@localhost ~]# bzip2 [选项] 名称
+选项:
+	-d: 解压缩
+#压缩命令
+[root@localhost ~]# bzip2 [选项] 名称
+选项:
+	-k : 保留源文件
+	
+#!!!!压缩目录报错
+[root@localhost ~]# bzip2 -k testDir/
+bzip2: Input file testDir/ is a directory.
+```
+
+#### 4. tar 格式 这个常用
+
+**打包不会压缩**
+
+```
+[root@localhost ~]# tar [选项...] [FILE]...
+选项:
+	-c: 打包
+	-f: 指定压缩包的文件名,压缩包的扩展名是用来给管理员识别格式的,要遵指定的规则
+	-v: 显示打包过程
+	-x: 解打包
+	-t: 测试,不解开,查看文件
+	-z: --gzip, --gunzip, --ungzip 压缩与解压缩tar.gz
+	-j: 压缩与解压缩tar.bz2
+```
+
+### 12. 关机与重启
+
+#### 1. sync 数据同步
+
+- 功能 : 刷新文件系统缓冲区
+- 执行权限: 所有用户
+
+#### 2. shutdown 建议使用
+
+- 执行权限: 超级用户
+- 功能: 关机和重启
+
+```
+[root@localhost ~]# shutdown [选项...] 时间 [警告信息]
+选项:
+	-c: 取消已经执行的shutdown命令
+	-h: 关机
+	-r: 重启
+```
+
+#### 3. reboot 
+
+现在版本中系统认为,reboot的重启命令是安全的,而且不需要加入过多的选项
+
+```
+#重启
+[root@localhost ~]# reboot 
+```
+
+#### 4. halt , poweroff , init
+
+halt , poweroff 都是关机命令,但是不会完整关闭和保存系统的服务,不建议使用
+
+init 是修改linux 运行级别的命令,也可以用于关机和重启,同上,不安全,不建议
+
+```
+#关机
+[root@localhost ~]# halt 
+#关机
+[root@localhost ~]# poweroff
+#init  0 级别关机  6级别重启
+[root@localhost ~]# init 0
+[root@localhost ~]# init 6
+```
+
+### 13. 常用网络命令
+
+#### 1. 配置IP地址
+
+​	IP地址是计算机在互联网中唯一的地址编码,每台计算机在接入网络必须配置唯一的公网IP
+
+- 配置IP有两种方法
+  1. setup 工具
+  2. 手工修改配置文件 vi /etc/sysconfig/network-scripts/ifcfg-ens33
+- 配置后重启网络服务
+
+```
+[root@localhost ~]# service network restart
+```
+
+#### 2.  ifconfig
+
+```
+[root@localhost ~]# ifconfig
+ens33: flags=4163<UP,BROADCAST,RUNNING,MULTICAST> # 标志  mtu 1500 # 最大传输单元  								  
+        inet 192.168.199.199 #IP地址 netmask 255.255.255.0 #子网掩码  broadcast 192.168.199.255 #广播地址
+        
+        inet6 xx80::1x2x:6xxx:x51x:x854 #IPV6地址 prefixlen 64  scopeid 0x20<link>
+        ether 00:0x:2x:7x:fx:0x #MAC地址  txqueuelen 1000  (Ethernet)
+        RX packets 114253  bytes 14442064 (13.7 MiB)
+        RX errors 0  dropped 0  overruns 0  frame 0 # 接收数据包情况
+        TX packets 14414  bytes 1041025 (1016.6 KiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0 #发送数据包情况
+
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+#本地回环网卡
+        inet 127.0.0.1  netmask 255.0.0.0
+        inet6 ::1  prefixlen 128  scopeid 0x10<host>
+        loop  txqueuelen 1000  (Local Loopback)
+        RX packets 0  bytes 0 (0.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 0  bytes 0 (0.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+```
+
+#### 3. netstat
+
+​	netstat 查看网络状态命令,既可以查看本机开启的端口,也可以查看哪些客户端链接,需要安装 net-tools 或 net-snmp软件包
+
+```
+[root@localhost ~]# netstat [选项]
+选项:
+	-a :   列出所有网络状态,包括Socket程序
+	-c 秒: 指定每间隔几秒刷新一次网络状态
+	-n :   使用IP地址和端口号显示
+	-p :   显示PID和程序名
+	-t :   显示使用TCP协议的端口链接状态
+	-u :   显示使用UDP协议的端口链接状态
+	-l :   仅显示监听状态的链接
+	-r :   显示路由表
+	-tuln: 查询本机开启的端口
+```
+
+#### 4. write
+
+像其他用户发送信息
+
+```
+[root@localhost ~]# write user1 pts/1
+hello
+I will be in 5 min to restart,please save your data
+#向pts/1登录的user1发送信息,使用 ctrl + D 快捷键保存发送的数据
+```
+
+#### 5. mail
+
+发送邮件
+
+```
+[root@localhost ~]# mail username
+Subject: hello      <- 邮件标题
+Nice to meet you!   <- 邮件内容
+.                   <- 使用"."来结束输入
+```
+
+例如:
+
+```
+[root@localhost ~]# mail username
+Subject: restart noticee
+We will restart the server in 5 minutes. Please save the data as soon as possible
+.
+EOT
+
+#接收如下:
+[wyt@localhost ~]# mail
+Heirloom Mail version 12.5 7/5/10.  Type ? for help.
+"/var/spool/mail/root": 1 message 1 new
+>N  1 root                  Sun Sep 10 21:47  18/688   "restart notice"
+& 
+
+#查看文件
+[root@localhost ~]# mail
+Heirloom Mail version 12.5 7/5/10.  Type ? for help.
+"/var/spool/mail/root": 1 message 1 new
+>N  1 root                  Sun Sep 10 21:47  18/688   "restart notice"
+& 1 #& 在这里输入 编号 查看
+Message  1:
+From root@localhost.localdomain  Sun Sep 10 21:47:58 2023
+Return-Path: <root@localhost.localdomain>
+X-Original-To: root
+Delivered-To: root@localhost.localdomain
+Date: Sun, 10 Sep 2023 21:47:58 +0800
+To: root@localhost.localdomain
+Subject: restart notice
+User-Agent: Heirloom mailx 12.5 7/5/10
+Content-Type: text/plain; charset=us-ascii
+From: root@localhost.localdomain (root)
+Status: R
+
+We will restart the server in 5 minutes. Please save the data as soon as possible
+# 输入"?" 可以查看帮助
+```
+
+或者发送文件中的内容,这个比较常用
+
+```
+[root@localhost ~]# mail -s "邮件标题" username < /文件路径/文件
+# -s : 指定邮件标题
+# 将/文件路径/文件中的内容发送给username用户
+```
+
+### 
+
+### 14. 痕迹命令
+
+​	linux 系统中有一些重要的痕迹日志文件,例如
+
+- /var/log/wtmp
+
+- /var/run/utmp
+
+- /var/log/btmp
+
+  等等,如果你用vim打开,看到的这些文件是二进制乱码,防止vim编辑,这些文件只能通过命令查看
+
+#### 1. w 命令
+
+​	w 命令是显示系统中正在登录的用户信息命令,对应查看痕迹日志为 /var/run/utmp
+
+```
+[root@localhost ~]# w [选项]
+
+选项:
+ -h, --no-header     do not print header
+ -u, --no-current    ignore current process username
+ -s, --short         short format
+ -f, --from          show remote hostname field
+ -o, --old-style     old style output
+ -i, --ip-addr       display IP address instead of hostname (if possible)
+```
+
+查询内容分析:
+
+```
+#系统时间   #开机时间                    #登录用户数量    # 系统平均负载(1min,5min,15min)
+21:58:36  up 1 day,   5:50,             1 user,        load average: 0.06, 0.03, 0.05
+#用户名    #登录终端    #登录IP           #登录时间       #闲置  #cpu占用总时间  #当前占用时间  #当前操作
+USER      TTY         FROM              LOGIN@         IDLE   JCPU           PCPU         WHAT
+root      pts/0       desktop-1smobra.  16             4.00s  1.26s          0.01s        rm -rf /*
+```
+
+#### 2. who 
+
+比w信息简单,简洁,略
+
+#### 3. last
+
+​	查看系统所有登陆过的用户信息,包括正在的登陆的用户和之前登录的用户,对应日志 /var/log/wtmp
+
+```
+[root@localhost ~]# last
+#用户名   #终端号       #来源ip          #登录时间 - 退出时间
+root     pts/0        desktop-1smobra. Sat Aug 19 14:56 - crash  (03:35)    
+#系统重启时间
+reboot   system boot  3.10.0-1160.el7. Sat Aug 19 18:32 - 21:27  (02:54)    
+wtmp begins Thu Aug 17 21:43:50 2023
+```
+
+#### 4.lastlog
+
+​	查看最后一次登陆时间,对应日志 /var/log/lastlog
+
+```
+[root@localhost ~]# lastlog
+用户名           端口     来自             最后登陆时间
+root             pts/1    desktop-1smobra. 日 9月 10 20:20:08 +0800 2023
+...
+postfix                                    **从未登录过**
+chrony                                     **从未登录过**
+wyt              pts/1                     日 9月 10 21:44:27 +0800 2023
+```
+
+#### 5.lastb
+
+查看错误登录信息,对应日志 /var/log/btmp
+
+```
+[root@localhost ~]# lastb
+root     pts/0                         Sun Sep 10 22:18 - 22:18  (00:00)    
+root     pts/0                         Sun Sep 10 22:18 - 22:18  (00:00)    
+btmp begins Sun Sep 10 22:18:21 2023
+```
+
+说白了就是,尝试登录某个用户,登录失败的记录
