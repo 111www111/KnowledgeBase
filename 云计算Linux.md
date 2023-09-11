@@ -1115,3 +1115,58 @@ btmp begins Sun Sep 10 22:18:21 2023
 ```
 
 说白了就是,尝试登录某个用户,登录失败的记录
+
+### 15. 挂载命令
+
+#### 1. mount
+
+linux所有存储设备都必须挂载,包括硬盘
+
+```
+#查询系统中已经挂载的设备, -l 会显示卷标名称
+[root@localhost ~]# mount
+```
+
+#### 2. 挂载光盘
+
+光盘挂载的前提是指定光盘的设备文件名,不同版本的linux 设备名不一样
+
+- CentOS 5.X 以前的系统,光盘设备文件名是 /dev/hdc
+
+- CentOS 6.X 以后的系统,光盘设备文件名是 /dev/sr0
+
+  无论哪个系统都有软连接/dev/cdrom, 可以作为光盘的设备文件名
+
+```
+#挂载光盘
+[root@localhost ~]# mount -t iso9660 /dev/cdrom /mnt/cdrom
+mount: /dev/sr0 写保护，将以只读方式挂载
+#访问挂载点
+[root@localhost cdrom]# cd /mnt/cdrom/
+[root@localhost cdrom]# ll
+总用量 696
+-rw-r--r--.  3 root root     14 10月 30 2020 CentOS_BuildTag
+drwxr-xr-x.  3 root root   2048 10月 27 2020 EFI
+-rw-rw-r--. 21 root root    227 8月  30 2017 EULA
+-rw-rw-r--. 21 root root  18009 12月 10 2015 GPL
+drwxr-xr-x.  3 root root   2048 10月 27 2020 images
+drwxr-xr-x.  2 root root   2048 11月  3 2020 isolinux
+drwxr-xr-x.  2 root root   2048 10月 27 2020 LiveOS
+drwxr-xr-x.  2 root root 673792 11月  4 2020 Packages
+drwxr-xr-x.  2 root root   4096 11月  4 2020 repodata
+-rw-rw-r--. 21 root root   1690 12月 10 2015 RPM-GPG-KEY-CentOS-7
+-rw-rw-r--. 21 root root   1690 12月 10 2015 RPM-GPG-KEY-CentOS-Testing-7
+-r--r--r--.  1 root root   2883 11月  4 2020 TRANS.TBL
+```
+
+用完记得卸载光盘,卸载时记得退出光盘目录才能正常卸载
+
+```
+[root@localhost ~]# umount /mnt/cdrom
+[root@localhost ~]# umount /dev/sr0
+#设备我文件名和挂载点连接了,卸载哪一个都行
+```
+
+#### 3.挂载U盘
+
+TODO W1T 39集
