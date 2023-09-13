@@ -1127,6 +1127,12 @@ linux所有存储设备都必须挂载,包括硬盘
 [root@localhost ~]# mount
 ```
 
+![image-20230913221655742](images/image-20230913221655742.png)
+
+![image-20230913221704735](images/image-20230913221704735.png)
+
+![image-20230913221715669](images/image-20230913221715669.png)
+
 #### 2. 挂载光盘
 
 光盘挂载的前提是指定光盘的设备文件名,不同版本的linux 设备名不一样
@@ -1167,6 +1173,65 @@ drwxr-xr-x.  2 root root   4096 11月  4 2020 repodata
 #设备我文件名和挂载点连接了,卸载哪一个都行
 ```
 
-#### 3.挂载U盘
+#### 3. 挂载U盘
 
-TODO W1T 39集
+U盘会与硬盘共用设备文件名,所以U盘的设备文件名不固定,需要手工查询
+
+windows中虚拟机读取U盘服务,不能被禁用:
+
+![image-20230913212502402](images/image-20230913212502402.png)
+
+插入U盘,成功提示
+
+![image-20230913212645378](images/image-20230913212645378.png)
+
+```
+#查询硬盘
+[root@localhost ~]# fdisk -l
+磁盘 /dev/sda：21.5 GB, 21474836480 字节，41943040 个扇区
+Units = 扇区 of 1 * 512 = 512 bytes
+扇区大小(逻辑/物理)：512 字节 / 512 字节
+I/O 大小(最小/最佳)：512 字节 / 512 字节
+磁盘标签类型：dos
+磁盘标识符：0x000eb35c
+
+   设备 Boot      Start         End      Blocks   Id  System
+/dev/sda1   *        2048      411647      204800   83  Linux
+/dev/sda2          411648     8800255     4194304   82  Linux swap / Solaris
+/dev/sda3         8800256    12994559     2097152   83  Linux
+/dev/sda4        12994560    41943039    14474240    5  Extended
+/dev/sda5        12996608    39948287    13475840   83  Linux
+
+磁盘 /dev/sdb：134.2 GB, 134217728000 字节，262144000 个扇区
+Units = 扇区 of 1 * 512 = 512 bytes
+扇区大小(逻辑/物理)：512 字节 / 512 字节
+I/O 大小(最小/最佳)：512 字节 / 512 字节
+磁盘标签类型：dos
+磁盘标识符：0x00001000
+设备 Boot           	Start    End      Blocks   Id  System
+/dev/sdb1(这个就是U盘)  2048   262143966   131070959+   7  HPFS/NTFS/exFAT
+```
+
+挂载目录
+
+```
+[root@localhost usbdir]# mount -t vfat /dev/sdb2 /mnt/usbdir/
+[root@localhost usbdir]# ll
+总用量 12
+drwxr-xr-x. 2 root root 4096 7月  27 2021 boot
+drwxr-xr-x. 4 root root 4096 7月  27 2021 efi
+drwxr-xr-x. 2 root root 4096 2月  24 2023 System Volume Information
+```
+
+关于中文的bug  一堆???之类的,建议挂载添加参数
+
+```
+[root@localhost usbdir]# mount -t vfat -o iocharset=utf8 /dev/sdb2 /mnt/usbdir/
+```
+
+卸载U盘:
+
+```
+[root@localhost ~]# umount /mnt/usbdir
+```
+
