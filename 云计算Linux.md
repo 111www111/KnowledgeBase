@@ -1235,3 +1235,171 @@ drwxr-xr-x. 2 root root 4096 2月  24 2023 System Volume Information
 [root@localhost ~]# umount /mnt/usbdir
 ```
 
+
+
+### 16.软件包
+
+软件包包含两类
+
+- 源码包
+- 二进制包
+  - DPKG
+  - RPM
+
+#### 1.RPM
+
+**包依赖**
+
+树形依赖  a---->b---->c
+
+环形依赖  a---->b---->c---->a
+
+函数库依赖    http://www.rpmfind.net/
+
+例如:
+
+```
+#安装问题如下:
+[root@localhost Packages]# rpm -ivh mysql-connector-odbc-5.2.5-8.el7.x86_64.rpm
+错误：依赖检测失败：
+	libodbcinst.so.2()(64bit) 被 mysql-connector-odbc-5.2.5-8.el7.x86_64 需要
+#==========================================================
+#但是在centos中无法找到该函数库,需要去函数库依赖(上面网站)自己下载
+```
+
+如果一个个都是手工解决,那运维基本就是拿命在干了,为了解决这个繁琐的问题,我们使用yum安装
+
+#### 2. yum安装
+
+Yellowdog Updater Modified
+
+有了这个东西,裤裤干就完了,这东西也有弊端,就是必须得联网,不过哥们会写一手,用光盘搭建本地yum
+
+#### 3. RPM安装
+
+##### 3.1 rpm 命名规则
+
+- 包全名：如果操作的是未安装软件包，则使用包全名，而且需要注意绝对路径
+- 包名：如果操作的是已经安装的软件包，则使用包名即可，系统会生产 RPM 包的数据库(var/lib/rpm/),而且可以在任意路径下操作
+
+```
+httpd-2.2.15-15.el6.centos.1.i686.rpm
+  httpd 软件包名
+  2.2.15 软件版本
+  15 软件发布的次数
+  el6 软件发行商。el6 是 RedHat 公司发布，适合 RHEL6.x（Red Hat Enterprise Linux）和 CentOS6.x下使用
+  i686 适合的硬件平台。RPM 包可以在不同的硬件平台安装，选择适合不同 CPU 的软件版本，可以最大化的发挥 CPU 性能，所以出现了所谓的 i386（386 以上计算机都可以安装）、i586（586以上的计算机都可以安装）、i686（奔腾 II 以上计算机都可以安装，目前所有的 CPU 都是奔腾 II 以上，所以这个软件版本居多）、x86_64（64 位 CPU 可以安装）和 noarch（没有硬件限制）等文件名了。
+  rpm rpm 包的扩展名。我们说过 Linux 下文件不是靠扩展名区分文件类型，也就是 Linux 中扩展名没有任何含义。可是这里怎么又出现了扩展名呢？原因很简单，如果我不把 RPM 的扩展名叫做“.rpm”，管理员很难知道这是一个 RPM 包，当然也就无法正确安装了。也就是说如果RPM 包不用“.rpm”作为扩展名，系统可以正确识别没有问题，可是管理员很难识别这是个什么样的软件。
+```
+
+##### 3.2 手动安装,升级,卸载
+
+**查询**
+
+```
+#查询
+[root@localhost html]# rpm -q 包名
+#查询全部
+[root@localhost html]# rpm -qa
+#查询信息
+[root@localhost html]# rpm -qi 包名
+#查询未安装包的详细信息
+[root@localhost html]# rpm -qip 包名
+```
+
+**常规默认安装位置**
+
+实际安装位置由 rpm 作者决定,  也可在安装时安装者指定
+
+操作上rpm包不要自定义安装位置, 源码包一定要指定安装位置
+
+![img](https://cdn.nlark.com/yuque/0/2020/png/393192/1593647258407-0809249e-9c48-4c6f-82db-fe572a1ec164.png)
+
+安装
+
+```
+rpm –ivh 包全名
+#注意一定是包全名。如果跟包全名的命令要注意路径，因为软件包在光盘当中
+选项：
+  -i install 安装（install）
+  -v 显示更详细的信息（verbose）
+  -U 大写,升级安装,如果没有安装过,则直接安装
+  -F 大写,如果安装了就升级,否则开摆
+  -e 卸载
+  -h 打印#显示安装进度（hash）
+       --nodeps 不检测依赖性安装。安装时会检测依赖性，确定所需的底层软件是否安装。
+        如果没有安装则会报错。如果我不管依赖性，想强行安装，可以使用这个选项。注意：
+        这样不检测依赖性安装的软件基本是不能使用的，所以不建议这样做
+       --replacefiles 替换文件安装。如果安装软件包，可是包中部分文件已经存在，那么
+        正常安装时候，会报错“某个文件已经存在”从而导致软件无法安装，使用这个选项可
+        以忽视这个报错，而覆盖安装
+       --replacepkgs 替换软件包安装。如果软件包已经安装，此选项可以把软件包重复安装一遍。
+       --force 强制安装。不管是否已经安装，都重新安装。就是—replacefiles 和
+      		—replacepkgs 的综合。
+       --test 测试安装。不会实际安装，只是检测一下依赖性。
+       --prefix 指定安装路径。为安装软件指定安装路径，而不使用默认安装路径。注意:如果指定了安装路径，软件没有安装到系统默认路径中的话，系统会找不到这些安装的软件，需要进行手工配置才能被系统识别。所以 rpm 包我们一般都采用默认路径安装。     
+```
+
+好的,很麻烦,和堆栈一样一层一层走的,建议yum
+
+![image-20230916202640079](images/image-20230916202640079.png)
+
+安装成功,查看端口
+
+```
+[root@localhost Packages]# service httpd start
+Redirecting to /bin/systemctl start httpd.service
+#查看端口
+[root@localhost Packages]# netstat -tuln
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State     
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN   
+tcp        0      0 127.0.0.1:25            0.0.0.0:*               LISTEN   
+tcp6       0      0 :::22                   :::*                    LISTEN   
+tcp6       0      0 ::1:25                  :::*                    LISTEN   
+tcp6       0      0 :::80(这个)             :::*                    LISTEN   
+udp        0      0 127.0.0.1:323           0.0.0.0:*                        
+udp6       0      0 ::1:323  
+```
+
+![image-20230916203205938](images/image-20230916203205938.png)
+
+**验证**
+
+```
+1）基本命令
+  [root@localhost ~]# rpm –Va 
+    选项：
+    -Va 校验本机已经安装的所有软件包
+  [root@localhost ~]# rpm –V 已安装的包名
+    选项：
+    -V 校验指定 RPM 包中的文件（verify）
+	[root@localhost ~]# rpm –Vf 系统文件名
+    选项：
+    -Vf 校验某个系统文件是否被修改
+    
+    
+验证举例
+[root@localhost ~]# rpm -V httpd
+  S.5....T. c /etc/httpd/conf/httpd.conf
+  验证内容 文件类型 文件名
+  
+出现了提示信息，我们来解释下最前面共有 8 个信息内容，是表示验证内容的。文件名前面的 c
+是表示这是个配置文件（configuration）。最后是文件名。那么验证内容中的 8 个信息的具体内容
+  如下：
+   S 文件大小是否改变
+   M 文件的类型或文件的权限（rwx）是否被改变
+   5 文件 MD5 校验和是否改变（可以看成文件内容是否改变）
+   D 设备的主从代码是否改变
+   L 文件路径是否改变
+   U 文件的属主（所有者）是否改变
+   G 文件的属组是否改变
+   T 文件的修改时间是否改变
+apache 配置文件的文件类型是 c，那么还有哪些文件类型呢？
+	 c 配置文件（config file） 
+   d 普通文档（documentation） 
+   g “鬼”文件（ghost file），很少见，就是该文件不应该被这个 RPM 包包含 
+   l 授权文件（license file） 
+   r 描述文件（read me）
+```
+
