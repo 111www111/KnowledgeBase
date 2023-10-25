@@ -160,11 +160,9 @@ docker kill 容器id或者容器名
 #删除已停止的容器 -f为强制
 docker rm -f 容器id      
 
-                                                                                          
-                                                                                                                                                                                    # 开启容器自启动
+# 开启容器自启动
 docker update --restart=always 【容器名】
 例如：docker update --restart=always tracker
-
 
 # 关闭容器自启动
 docker update --restart=no【容器名】
