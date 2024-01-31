@@ -310,11 +310,11 @@ public class HelloService {
 
 **添加任务配置**
 
-**![image-20221102172115256](images/image-20221102172115256.png)**
+**![image-20221102172115256](images\image-20221102172115256.png)**
 
 **通过GLUE IDE在线编辑代码**
 
-**![image-20221102172248883](images/image-20221102172248883.png)**
+**![image-20221102172248883](images\image-20221102172248883.png)**
 
 ****
 
@@ -502,7 +502,7 @@ public void sendMsgHandler() throws Exception{
 
 **任务配置信息**
 
-**![image-20221102164333453](images/image-20221102164333453.png)**
+**![image-20221102164333453](images\image-20221102164333453.png)**
 
 ### 3.2 分片概念讲解
 
@@ -567,5 +567,5 @@ public void sendMsgShardingHandler() throws Exception{
 
 **任务设置**
 
-**![image-20221102170055525](images/image-20221102170055525.png)**
+**![image-20221102170055525](images\image-20221102170055525.png)**
 
